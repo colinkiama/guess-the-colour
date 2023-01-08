@@ -9,6 +9,22 @@ const colorButtonGraphics = new Graphics();
 const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
 
+enum Colors {
+  RED = 0xff0000,
+  BLUE = 0x0000ff,
+  GREEN = 0x00ff00,
+  YELLOW = 0x00ffff,
+  ORANGE = 0xffa500,
+}
+
+const COLOR_BUTTON_COLORS: Colors[] = [
+  Colors.RED,
+  Colors.BLUE,
+  Colors.GREEN,
+  Colors.YELLOW,
+  Colors.ORANGE,
+];
+
 for (let i = 0; i < 5; i++) {
   const circleGeometry = {
     x: (i % 5) * (COLOR_BUTTON_RADIUS * 2 + COLOR_BUTTON_SPACING),
@@ -17,7 +33,7 @@ for (let i = 0; i < 5; i++) {
   };
 
   colorButtonGraphics
-    .beginFill(0xff0000)
+    .beginFill(COLOR_BUTTON_COLORS[i])
     .drawCircle(circleGeometry.x, circleGeometry.y, circleGeometry.radius)
     .endFill();
 }
