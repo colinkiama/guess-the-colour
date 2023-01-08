@@ -1,5 +1,6 @@
 import "./style.css";
 import { Application, Graphics } from "pixi.js";
+import { Colors } from "./consts/Colors";
 
 let app = new Application({ width: 360, height: 640 });
 document.body.appendChild(app.view as HTMLCanvasElement);
@@ -9,15 +10,7 @@ const colorButtonGraphics = new Graphics();
 const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
 
-enum Colors {
-  RED = 0xff0000,
-  BLUE = 0x0000ff,
-  GREEN = 0x00ff00,
-  YELLOW = 0x00ffff,
-  ORANGE = 0xffa500,
-}
-
-const COLOR_BUTTON_COLORS: Colors[] = [
+const COLOR_BUTTON_COLORS: number[] = [
   Colors.RED,
   Colors.BLUE,
   Colors.GREEN,
