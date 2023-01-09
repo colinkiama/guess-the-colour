@@ -1,5 +1,6 @@
 import { Application, Graphics } from "pixi.js";
 import { Colors } from "../consts/Colors";
+import { Component } from "./Component";
 
 const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
@@ -12,12 +13,11 @@ const COLOR_BUTTON_COLORS: number[] = [
   Colors.ORANGE,
 ];
 
-export default class ColorButtonStack {
-  #app: Application;
+export default class ColorButtonStack extends Component {
   graphics!: Graphics;
 
   constructor(app: Application) {
-    this.#app = app;
+    super(app);
   }
 
   render() {
@@ -36,11 +36,15 @@ export default class ColorButtonStack {
         .endFill();
     }
 
-    colorButtonGraphics.x = this.#app.screen.width / 2;
-    colorButtonGraphics.y = this.#app.screen.height - 80;
+    colorButtonGraphics.x = this.app.screen.width / 2;
+    colorButtonGraphics.y = this.app.screen.height - 80;
     colorButtonGraphics.pivot.x =
       colorButtonGraphics.width / 2 - COLOR_BUTTON_RADIUS;
 
-    this.#app.stage.addChild(colorButtonGraphics);
+    this.app.stage.addChild(colorButtonGraphics);
+  }
+
+  destroy(): void {
+    throw new Error("Method not implemented.");
   }
 }
