@@ -1,6 +1,6 @@
 # Guess The Colour
 
-This is a game created using Pixi.js where you guess the correct colour that the computer has randomly selected.
+This is a game created using PixiJS where you guess the correct colour that the computer has randomly selected.
 
 You're given 20 seconds to guess as many correct colours as you can from the following choices: red, blue, green, yellow and orange. You get a point for each colour that you guess correctly!
 
@@ -9,7 +9,7 @@ You're given 20 seconds to guess as many correct colours as you can from the fol
 ### Prerequisites
 
 - Node.js (Built with Node v18.12.1)
-- Node Packagte Manager (NPM) - (Built with NPM 8.19.2)
+- Node Package Manager (NPM) - (Built with NPM 8.19.2)
 - Yarn - (Built with Yarn 3.3.0).
 
 ### Onboarding
