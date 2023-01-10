@@ -4,6 +4,7 @@ import {
   FederatedPointerEvent,
   Graphics,
 } from "pixi.js";
+import { fetchRandomNumbers } from "../api/randomNumber";
 import { Colors } from "../consts/Colors";
 import { Component } from "./Component";
 
@@ -60,10 +61,10 @@ export default class ColorButtonStack extends Component {
     this.app.stage.addChild(colorButtonContainer);
   }
 
-  handleColorSelection(
+  async handleColorSelection(
     evnt: FederatedPointerEvent,
     selectedColor: number
-  ): void {
+  ): Promise<void> {
     // console.log(target.geometry.colors);
 
     switch (selectedColor) {
@@ -84,7 +85,6 @@ export default class ColorButtonStack extends Component {
         break;
       default:
         console.log("Couldn't handle color selection");
-        console.log("");
         break;
     }
   }
