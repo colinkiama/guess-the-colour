@@ -5,3 +5,5 @@ export type GameResults = {
   correctGuesses: number;
   totalGuesses: number;
 };
+
+export type SelectedColorCallbackFunction = (color: number) => void;
