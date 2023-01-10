@@ -4,7 +4,6 @@ import ColorResultIndicator from "../components/ColorResultIndicator";
 import Scene from "./Scene";
 import { Application } from "pixi.js";
 import { fetchRandomNumbers } from "../api/RandomNumber";
-import { GuessData, SelectedColorCallbackFunction } from "../types";
 import { Colors } from "../consts/Colors";
 import GuessService from "../services/guessService";
 import { StatusUpdateType } from "../consts/StatusUpdateType";
@@ -46,7 +45,7 @@ export default class MainGame extends Scene {
     this.statusFields.render();
 
     // TODO: Handle potential errors (it makes a network request)
-    // this.generatedColorChoices = await fetchRandomNumbers();
+    this.generatedColorChoices = await fetchRandomNumbers();
 
     this.guessService = new GuessService();
     this.guessService.setAnswer(
@@ -76,7 +75,7 @@ export default class MainGame extends Scene {
     }
   }
 
-  handleColorSelection(color: Number) {
+  handleColorSelection(color: number) {
     let playerGuess = this.determineColorSelection(color);
     this.colorResultIndicator.cycleColorsToResult(color);
     this.guessService.guess(playerGuess);
