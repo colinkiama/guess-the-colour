@@ -4,6 +4,12 @@ import { Component } from "./Component";
 const STATUS_FIELD_MARGIN = 20;
 
 export default class StatusFields extends Component {
+  updateTime(timeLeft: number) {
+    throw new Error("Method not implemented.");
+  }
+  updateScore(correctGuesses: number) {
+    throw new Error("Method not implemented.");
+  }
   constructor(app: Application) {
     super(app);
   }

@@ -4,8 +4,9 @@ import {
   FederatedPointerEvent,
   Graphics,
 } from "pixi.js";
-import { fetchRandomNumbers } from "../api/randomNumber";
+import { fetchRandomNumbers } from "../api/RandomNumber";
 import { Colors } from "../consts/Colors";
+import { SelectedColorCallbackFunction } from "../types";
 import { Component } from "./Component";
 
 const COLOR_BUTTON_RADIUS = 25;
@@ -21,9 +22,14 @@ const COLOR_BUTTON_COLORS: number[] = [
 
 export default class ColorButtonStack extends Component {
   graphics!: Graphics;
+  selectedColorCallback: SelectedColorCallbackFunction;
 
-  constructor(app: Application) {
+  constructor(
+    app: Application,
+    selectedColorCallback: SelectedColorCallbackFunction
+  ) {
     super(app);
+    this.selectedColorCallback = selectedColorCallback;
   }
 
   render() {
@@ -87,9 +93,15 @@ export default class ColorButtonStack extends Component {
         console.log("Couldn't handle color selection");
         break;
     }
+
+    this.sendColorSelectionNotification(selectedColor);
   }
 
   destroy(): void {
     throw new Error("Method not implemented.");
+  }
+
+  sendColorSelectionNotification(selectedColor: number) {
+    this.selectedColorCallback(selectedColor);
   }
 }
