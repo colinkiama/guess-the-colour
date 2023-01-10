@@ -85,8 +85,8 @@ export default class MainGame extends Scene {
   }
 
   determineColorSelection(color: Number): number {
-    for (let i = 0; i < colorChoiceArray.length; i++) {
-      const choiceValue = colorChoiceArray[i];
+    for (let i = 0; i < COLOR_CHOICES.length; i++) {
+      const choiceValue = COLOR_CHOICES[i];
       if (color === choiceValue) {
         console.log("Player colour selection data:", {
           color: color.toString(16),

@@ -44,7 +44,7 @@ export default class ColorButtonStack extends Component {
         radius: COLOR_BUTTON_RADIUS,
       };
 
-      const buttonColor = COLOR_BUTTON_COLORS[i];
+      const buttonColor = COLOR_CHOICES[i];
 
       colorButtonGraphics
         .beginFill(buttonColor)

@@ -50,6 +50,7 @@ export default class ColorResultCircle extends Component {
       this.cycleIndex = CYCLE_COLORS.indexOf(color);
       clearInterval(this.cycleUpdateTimerId);
       clearTimeout(this.cycleCompletionTimerId);
+      this.cycleIndex = COLOR_CHOICES.indexOf(color);
       this.completedCycleCallback();
     }, CYCLE_TIMEOUT);
 

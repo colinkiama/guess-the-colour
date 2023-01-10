@@ -5,3 +5,11 @@ export const Colors = {
   YELLOW: 0xffff00,
   ORANGE: 0xffa500,
 };
+
+export const COLOR_CHOICES = [
+  Colors.RED,
+  Colors.BLUE,
+  Colors.GREEN,
+  Colors.YELLOW,
+  Colors.ORANGE,
+];
