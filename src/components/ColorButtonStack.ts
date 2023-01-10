@@ -4,21 +4,13 @@ import {
   FederatedPointerEvent,
   Graphics,
 } from "pixi.js";
-import { fetchRandomNumbers } from "../api/RandomNumber";
-import { Colors } from "../consts/Colors";
+
+import { Colors, COLOR_CHOICES } from "../consts/Colors";
 import { SelectedColorCallbackFunction } from "../types";
 import { Component } from "./Component";
 
 const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
-
-const COLOR_BUTTON_COLORS: number[] = [
-  Colors.RED,
-  Colors.BLUE,
-  Colors.GREEN,
-  Colors.YELLOW,
-  Colors.ORANGE,
-];
 
 export default class ColorButtonStack extends Component {
   graphics!: Graphics;
@@ -44,7 +36,7 @@ export default class ColorButtonStack extends Component {
         radius: COLOR_BUTTON_RADIUS,
       };
 
-      const buttonColor = COLOR_BUTTON_COLORS[i];
+      const buttonColor = COLOR_CHOICES[i];
 
       colorButtonGraphics
         .beginFill(buttonColor)
@@ -67,10 +59,7 @@ export default class ColorButtonStack extends Component {
     this.app.stage.addChild(colorButtonContainer);
   }
 
-  async handleColorSelection(
-    evnt: FederatedPointerEvent,
-    selectedColor: number
-  ): Promise<void> {
+  handleColorSelection(evnt: FederatedPointerEvent, selectedColor: number) {
     // console.log(target.geometry.colors);
 
     switch (selectedColor) {
