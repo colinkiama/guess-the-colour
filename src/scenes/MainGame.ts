@@ -4,17 +4,9 @@ import ColorResultIndicator from "../components/ColorResultIndicator";
 import Scene from "./Scene";
 import { Application } from "pixi.js";
 import { fetchRandomNumbers } from "../api/RandomNumber";
-import { Colors } from "../consts/Colors";
+import { COLOR_CHOICES } from "../consts/Colors";
 import GuessService from "../services/guessService";
 import { StatusUpdateType } from "../consts/StatusUpdateType";
-
-const colorChoiceArray = [
-  Colors.RED,
-  Colors.BLUE,
-  Colors.GREEN,
-  Colors.YELLOW,
-  Colors.ORANGE,
-];
 
 const GAME_TIME = 120000; // In milliseconds
 
@@ -77,7 +69,13 @@ export default class MainGame extends Scene {
 
   handleColorSelection(color: number) {
     let playerGuess = this.determineColorSelection(color);
-    this.colorResultIndicator.cycleColorsToResult(color);
+
+    let correctAnswerIndex =
+      this.generatedColorChoices[this.guessService.data.totalGuesses];
+
+    this.colorResultIndicator.cycleColorsToResult(
+      COLOR_CHOICES[correctAnswerIndex]
+    );
     this.guessService.guess(playerGuess);
     this.guessService.setAnswer(
       this.generatedColorChoices[this.guessService.data.totalGuesses]

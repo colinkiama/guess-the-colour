@@ -4,12 +4,9 @@ import { Component } from "./Component";
 const STATUS_FIELD_MARGIN = 20;
 
 export default class StatusFields extends Component {
-  updateTime(timeLeft: number) {
-    throw new Error("Method not implemented.");
-  }
-  updateScore(correctGuesses: number) {
-    throw new Error("Method not implemented.");
-  }
+  timeRemainingTextField!: Text;
+  scoreTextField!: Text;
+
   constructor(app: Application) {
     super(app);
   }
@@ -23,18 +20,24 @@ export default class StatusFields extends Component {
       align: "center",
     });
 
-    let timeRemainingTextField = new Text("0", statusFieldsTextStyle);
+    this.timeRemainingTextField = new Text("0", statusFieldsTextStyle);
 
-    let scoreTextField = new Text("1", statusFieldsTextStyle);
+    this.scoreTextField = new Text("0", statusFieldsTextStyle);
 
-    const statusFields: Text[] = [timeRemainingTextField, scoreTextField];
+    const statusFields: Text[] = [
+      this.timeRemainingTextField,
+      this.scoreTextField,
+    ];
 
     for (let i = 0; i < 2; i++) {
       let statusField = statusFields[i];
       statusField.y = (i % 2) * (statusField.height + STATUS_FIELD_MARGIN);
     }
 
-    textFieldContainer.addChild(timeRemainingTextField, scoreTextField);
+    textFieldContainer.addChild(
+      this.timeRemainingTextField,
+      this.scoreTextField
+    );
     textFieldContainer.x = this.app.screen.width / 2;
     textFieldContainer.y = 40;
     textFieldContainer.pivot.x = textFieldContainer.width / 2;
@@ -43,5 +46,13 @@ export default class StatusFields extends Component {
 
   destroy(): void {
     throw new Error("Method not implemented.");
+  }
+
+  updateTime(timeLeft: number) {
+    throw new Error("Method not implemented.");
+  }
+
+  updateScore(correctGuesses: number) {
+    this.scoreTextField.text = correctGuesses.toString(10);
   }
 }
