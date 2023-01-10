@@ -4,7 +4,7 @@ import {
   FederatedPointerEvent,
   Graphics,
 } from "pixi.js";
-import { fetchRandomNumbers } from "../api/randomNumber";
+import { fetchRandomNumbers } from "../api/RandomNumber";
 import { Colors } from "../consts/Colors";
 import { SelectedColorCallbackFunction } from "../types";
 import { Component } from "./Component";
