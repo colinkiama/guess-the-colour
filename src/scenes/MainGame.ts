@@ -1,6 +1,6 @@
 import ColorButtonStack from "../components/ColorButtonStack";
 import StatusFields from "../components/StatusFields";
-import ColorResultIndicator from "../components/ColorResultIndicator";
+import ColorAnswerIndicator from "../components/ColorAnswerIndicator";
 import { Application, Text } from "pixi.js";
 import { fetchRandomNumbers } from "../api/RandomNumber";
 import { COLOR_CHOICES } from "../consts/Colors";
@@ -16,7 +16,7 @@ const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
   private colorButtonStack!: ColorButtonStack;
-  private colorResultIndicator!: ColorResultIndicator;
+  private colorAnswerIndicator!: ColorAnswerIndicator;
   private statusFields!: StatusFields;
   private generatedColorChoices!: number[];
   private guessService!: GuessService;
@@ -57,11 +57,11 @@ export default class MainGame extends Scene {
 
     this.addChild(this.colorButtonStack);
 
-    this.colorResultIndicator = new ColorResultIndicator(this.app, () =>
+    this.colorAnswerIndicator = new ColorAnswerIndicator(this.app, () =>
       this.handleCompletedResultIndicatorCycle()
     );
 
-    this.addChild(this.colorResultIndicator);
+    this.addChild(this.colorAnswerIndicator);
 
     this.statusFields = new StatusFields(this.app);
     this.addChild(this.statusFields);
@@ -120,7 +120,7 @@ export default class MainGame extends Scene {
       this.generatedColorChoices[this.guessService.data.totalGuesses];
 
     this.revealingAnswer = true;
-    this.colorResultIndicator.cycleColorsToResult(
+    this.colorAnswerIndicator.cycleColorsToAnswer(
       COLOR_CHOICES[correctAnswerIndex]
     );
     this.guessService.guess(playerGuess);
