@@ -22,6 +22,7 @@ export default class MainGame extends Scene {
   private guessService!: GuessService;
   private gameTimerService!: GameTimerService;
   private gameOverCallback: (results: GuessData) => void;
+  private revealingAnswer: boolean = false;
 
   constructor(
     app: Application,
@@ -32,6 +33,7 @@ export default class MainGame extends Scene {
   }
 
   async start() {
+    this.revealingAnswer = false;
     this.colorButtonStack = new ColorButtonStack(this.app, (color) =>
       this.handleColorSelection(color)
     );
@@ -73,6 +75,7 @@ export default class MainGame extends Scene {
   }
 
   handleCompletedResultIndicatorCycle() {
+    this.revealingAnswer = false;
     this.colorButtonStack.brightenColorButtons();
     this.updateStatus(StatusUpdateType.SCORE, {
       score: this.guessService.data.correctGuesses,
@@ -91,11 +94,16 @@ export default class MainGame extends Scene {
   }
 
   handleColorSelection(color: number) {
+    if (this.revealingAnswer) {
+      return;
+    }
+
     let playerGuess = this.determineColorSelection(color);
 
     let correctAnswerIndex =
       this.generatedColorChoices[this.guessService.data.totalGuesses];
 
+    this.revealingAnswer = true;
     this.colorResultIndicator.cycleColorsToResult(
       COLOR_CHOICES[correctAnswerIndex]
     );

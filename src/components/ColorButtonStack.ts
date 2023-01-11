@@ -12,11 +12,6 @@ import { Component } from "./Component";
 const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
 
-type CirlceGeometry = {
-  x: number;
-  y: number;
-  radius: number;
-};
 export default class ColorButtonStack extends Component {
   colorButtonContainer!: Container<Graphics>;
   selectedColorCallback: SelectedColorCallbackFunction;
