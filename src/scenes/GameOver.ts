@@ -86,12 +86,13 @@ export default class GameOver extends Scene {
     centerText(guessesMadeText, this.app);
     guessesMadeText.y = scoreText.height + statsTextMargin;
 
-    let accuracyText = new Text(
-      `Accuracy: ${Math.floor(
-        (this.results.correctGuesses / this.results.totalGuesses) * 100
-      )}%`,
-      statsTextStyle
-    );
+    let accuracy =
+      this.results.totalGuesses > 0
+        ? Math.floor(this.results.correctGuesses / this.results.totalGuesses) *
+          100
+        : 0;
+
+    let accuracyText = new Text(`Accuracy: ${accuracy}%`, statsTextStyle);
 
     centerText(accuracyText, this.app);
     accuracyText.y =

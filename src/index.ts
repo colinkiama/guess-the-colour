@@ -7,18 +7,20 @@ import GameOver from "./scenes/GameOver";
 let app = new Application({ width: 360, height: 640 });
 document.body.appendChild(app.view as HTMLCanvasElement);
 
-let mainGame = new MainGame(app, (results: GuessData) =>
+let gameOverScene: GameOver;
+let mainGameScene = new MainGame(app, (results: GuessData) =>
   gameOverCallback(results)
 );
 
-mainGame.start();
+mainGameScene.start();
 
 function gameOverCallback(results: GuessData) {
-  mainGame.destroy();
-  let gameOverScene = new GameOver(app, results, () => playAgainCallback());
+  mainGameScene.destroy();
+  gameOverScene = new GameOver(app, results, () => playAgainCallback());
   gameOverScene.start();
 }
 
 function playAgainCallback() {
-  mainGame.start();
+  gameOverScene.destroy();
+  mainGameScene.start();
 }
