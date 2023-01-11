@@ -11,3 +11,10 @@ export type StatusUpdate = {
   score?: number;
   timeLeft?: number;
 };
+
+export type GameTimerServiceParams = {
+  sessionLength: number;
+  tickInterval: number;
+  tickCallback: (timeLeft: number) => void;
+  timerCompletedCallback: () => void;
+};

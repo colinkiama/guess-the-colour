@@ -15,7 +15,6 @@ const GAME_TIME = 5000; // In milliseconds
 const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
-  private colorButtonStack!: ColorButtonStack;
   private colorAnswerIndicator!: ColorAnswerIndicator;
   private statusFields!: StatusFields;
   private generatedColorChoices!: number[];
@@ -23,7 +22,7 @@ export default class MainGame extends Scene {
   private gameTimerService!: GameTimerService;
   private gameOverCallback: (results: GuessData) => void;
   private revealingAnswer: boolean = false;
-  private loadingText!: Text;
+  private colorButtonStack!: ColorButtonStack;
 
   constructor(
     app: Application,
@@ -34,60 +33,96 @@ export default class MainGame extends Scene {
   }
 
   async start() {
-    this.loadingText = new Text("Loading...", {
+    this.revealingAnswer = false;
+    this.generatedColorChoices = await this.generateAnswers();
+    this.colorButtonStack = this.addColorButtonStack();
+    this.colorAnswerIndicator = this.addColorAnswerIndicator();
+    this.statusFields = this.addStatusFields();
+    this.guessService = this.setUpGuessService();
+
+    this.gameTimerService = this.setUpGameTimerService();
+    this.gameTimerService.start();
+
+    console.log(
+      "Color Choices for this game session:",
+      this.generatedColorChoices
+    );
+  }
+
+  setUpGameTimerService(): GameTimerService {
+    let gameTimerService = new GameTimerService({
+      sessionLength: GAME_TIME,
+      tickInterval: GAME_TIME_UPDATE_INTERVAL,
+      tickCallback: (timeLeft: number) =>
+        this.updateStatus(StatusUpdateType.TIME, { timeLeft: timeLeft }),
+      timerCompletedCallback: () => {
+        this.updateStatus(StatusUpdateType.TIME, { timeLeft: 0 });
+        this.gameOverCallback(this.guessService.data);
+      },
+    });
+
+    return gameTimerService;
+  }
+
+  setUpGuessService(): GuessService {
+    let guessService = new GuessService();
+    guessService.setAnswer(
+      this.generatedColorChoices[this.guessService.data.totalGuesses]
+    );
+
+    return guessService;
+  }
+
+  addStatusFields(): StatusFields {
+    let statusFields = new StatusFields(this.app);
+    this.addChild(statusFields);
+    return statusFields;
+  }
+
+  addColorAnswerIndicator(): ColorAnswerIndicator {
+    let colorAnswerIndicator = new ColorAnswerIndicator(this.app, () =>
+      this.handleCompletedResultIndicatorCycle()
+    );
+
+    this.addChild(colorAnswerIndicator);
+
+    return colorAnswerIndicator;
+  }
+
+  async generateAnswers(): Promise<number[]> {
+    let loadingText = this.addLoadingText();
+    // TODO: Handle potential errors (it makes a network request)
+    let generatedAnswers = await fetchRandomNumbers();
+    loadingText.destroy();
+
+    return generatedAnswers;
+  }
+
+  addLoadingText(): Text {
+    let loadingText = new Text("Loading...", {
       fontFamily: "Arial",
       fontSize: 20,
       align: "center",
       fill: ColorStrings.WHITE,
     });
 
-    this.loadingText.anchor.set(0.5);
-    this.loadingText.x = this.app.screen.width / 2;
-    this.loadingText.y = this.app.screen.height / 2;
-    this.addChild(this.loadingText);
+    loadingText.anchor.set(0.5);
+    loadingText.x = this.app.screen.width / 2;
+    loadingText.y = this.app.screen.height / 2;
 
-    // TODO: Handle potential errors (it makes a network request)
-    this.generatedColorChoices = await fetchRandomNumbers();
-    this.loadingText.destroy();
+    this.addChild(loadingText);
 
-    this.revealingAnswer = false;
-    this.colorButtonStack = new ColorButtonStack(this.app, (color) =>
+    return loadingText;
+  }
+
+  addColorButtonStack(): ColorButtonStack {
+    let colorButtonStack = new ColorButtonStack(this.app, (color) =>
       this.handleColorSelection(color)
     );
 
-    this.addChild(this.colorButtonStack);
+    this.addChild(colorButtonStack);
 
-    this.colorAnswerIndicator = new ColorAnswerIndicator(this.app, () =>
-      this.handleCompletedResultIndicatorCycle()
-    );
-
-    this.addChild(this.colorAnswerIndicator);
-
-    this.statusFields = new StatusFields(this.app);
-    this.addChild(this.statusFields);
-
-    this.guessService = new GuessService();
-    this.guessService.setAnswer(
-      this.generatedColorChoices[this.guessService.data.totalGuesses]
-    );
-
-    console.log(
-      "Color Choices for this game session:",
-      this.generatedColorChoices
-    );
-
-    this.gameTimerService = new GameTimerService(
-      GAME_TIME,
-      GAME_TIME_UPDATE_INTERVAL,
-      (timeLeft: number) =>
-        this.updateStatus(StatusUpdateType.TIME, { timeLeft: timeLeft }),
-      () => {
-        this.updateStatus(StatusUpdateType.TIME, { timeLeft: 0 });
-        this.gameOverCallback(this.guessService.data);
-      }
-    );
-
-    this.gameTimerService.start();
+    return colorButtonStack;
   }
 
   handleCompletedResultIndicatorCycle() {
@@ -123,6 +158,7 @@ export default class MainGame extends Scene {
     this.colorAnswerIndicator.cycleColorsToAnswer(
       COLOR_CHOICES[correctAnswerIndex]
     );
+
     this.guessService.guess(playerGuess);
     this.guessService.setAnswer(
       this.generatedColorChoices[this.guessService.data.totalGuesses]
