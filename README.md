@@ -2,7 +2,7 @@
 
 ![Screenshot](./img/screenshot.png)
 
-This is a game created using PixiJS where you guess the correct colour that the computer has randomly selected.
+This is a game created using [PixiJS](https://pixijs.com/) where you guess the correct colour that the computer has randomly selected.
 
 You're given 20 seconds to guess as many correct colours as you can from the following choices: red, blue, green, yellow and orange.
 
