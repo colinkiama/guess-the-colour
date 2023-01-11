@@ -10,8 +10,7 @@ import GameTimerService from "../services/GameTimerService";
 import { GuessData, StatusUpdate } from "../types";
 import { Scene } from "./Scene";
 
-// const GAME_TIME = 120000; // In milliseconds
-const GAME_TIME = 5000; // In milliseconds
+const GAME_TIME = 120000; // In milliseconds
 const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
@@ -183,11 +182,6 @@ export default class MainGame extends Scene {
     for (let i = 0; i < COLOR_CHOICES.length; i++) {
       const choiceValue = COLOR_CHOICES[i];
       if (color === choiceValue) {
-        console.log("Player colour selection data:", {
-          color: color.toString(16),
-          choiceIndex: i,
-        });
-
         return i;
       }
     }
