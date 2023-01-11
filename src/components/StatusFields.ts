@@ -1,8 +1,7 @@
-import { Application, Container, Text, TextStyle } from "pixi.js";
+import { Application, Text, TextStyle } from "pixi.js";
 import { Component } from "./Component";
 
 const STATUS_FIELD_MARGIN = 20;
-
 export default class StatusFields extends Component {
   timeRemainingTextField!: Text;
   scoreTextField!: Text;
@@ -20,7 +19,6 @@ export default class StatusFields extends Component {
     });
 
     this.timeRemainingTextField = new Text("0", statusFieldsTextStyle);
-
     this.scoreTextField = new Text("0", statusFieldsTextStyle);
 
     const statusFields: Text[] = [
@@ -28,10 +26,13 @@ export default class StatusFields extends Component {
       this.scoreTextField,
     ];
 
-    for (let i = 0; i < 2; i++) {
+    const statusFieldsLength = statusFields.length;
+
+    for (let i = 0; i < statusFieldsLength; i++) {
       let statusField = statusFields[i];
       statusField.x = this.app.screen.width / 2;
-      statusField.y = (i % 2) * (statusField.height + STATUS_FIELD_MARGIN);
+      statusField.y =
+        (i % statusFieldsLength) * (statusField.height + STATUS_FIELD_MARGIN);
       statusField.anchor.x = 0.5;
     }
 
