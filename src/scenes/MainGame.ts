@@ -7,8 +7,11 @@ import { fetchRandomNumbers } from "../api/RandomNumber";
 import { COLOR_CHOICES } from "../consts/Colors";
 import GuessService from "../services/guessService";
 import { StatusUpdateType } from "../consts/StatusUpdateType";
+import GameTimerService from "../services/GameTimerService";
+import { StatusUpdate } from "../types";
 
 const GAME_TIME = 120000; // In milliseconds
+const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
   private colorButtonStack!: ColorButtonStack;
@@ -16,7 +19,7 @@ export default class MainGame extends Scene {
   private statusFields!: StatusFields;
   private generatedColorChoices!: number[];
   private guessService!: GuessService;
-  private timeLeft!: number;
+  private gameTimerService!: GameTimerService;
 
   constructor(app: Application) {
     super(app);
@@ -49,20 +52,33 @@ export default class MainGame extends Scene {
       this.generatedColorChoices
     );
 
-    this.timeLeft = GAME_TIME;
+    this.gameTimerService = new GameTimerService(
+      GAME_TIME,
+      GAME_TIME_UPDATE_INTERVAL,
+      (timeLeft: number) =>
+        this.updateStatus(StatusUpdateType.TIME, { timeLeft: timeLeft }),
+      () => {
+        this.updateStatus(StatusUpdateType.TIME, { timeLeft: 0 });
+        // TODO: Handle Game Over
+      }
+    );
+
+    this.gameTimerService.start();
   }
 
   handleCompletedResultIndicatorCycle() {
-    this.updateStatus("score");
+    this.updateStatus(StatusUpdateType.SCORE, {
+      score: this.guessService.data.correctGuesses,
+    });
   }
 
-  updateStatus(updateType: string) {
+  updateStatus(updateType: string, data: StatusUpdate) {
     switch (updateType) {
-      case StatusUpdateType.score:
-        this.statusFields.updateScore(this.guessService.data.correctGuesses);
+      case StatusUpdateType.SCORE:
+        this.statusFields.updateScore(data.score!);
         break;
-      case StatusUpdateType.time:
-        this.statusFields.updateTime(this.timeLeft);
+      case StatusUpdateType.TIME:
+        this.statusFields.updateTime(data.timeLeft!);
         break;
     }
   }

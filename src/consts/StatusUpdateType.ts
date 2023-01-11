@@ -1,4 +1,4 @@
 export const StatusUpdateType = {
-  score: "score",
-  time: "time",
+  SCORE: "score",
+  TIME: "time",
 };

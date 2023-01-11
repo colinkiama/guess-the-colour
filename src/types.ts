@@ -6,3 +6,8 @@ export type GuessData = {
   correctGuesses: number;
   totalGuesses: number;
 };
+
+export type StatusUpdate = {
+  score?: number;
+  timeLeft?: number;
+};
