@@ -20,6 +20,10 @@ export default class ColorResultCircle extends Component {
     this.completedCycleCallback = completedCycleCallback;
     this.cycleIndex = 0;
     this.graphics = new Graphics();
+
+    // Timer creation methods return non-zero values
+    this.cycleUpdateTimerId = 0;
+    this.cycleCompletionTimerId = 0;
   }
 
   render(): void {
@@ -41,6 +45,9 @@ export default class ColorResultCircle extends Component {
     this.cycleCompletionTimerId = setTimeout(() => {
       clearInterval(this.cycleUpdateTimerId);
       clearTimeout(this.cycleCompletionTimerId);
+      this.cycleUpdateTimerId = 0;
+      this.cycleCompletionTimerId = 0;
+
       this.cycleIndex = COLOR_CHOICES.indexOf(color);
       this.draw();
       this.completedCycleCallback();
@@ -53,7 +60,16 @@ export default class ColorResultCircle extends Component {
   }
 
   destroy(): void {
-    throw new Error("Method not implemented.");
+    this.graphics.destroy();
+    if (this.cycleUpdateTimerId !== 0) {
+      clearInterval(this.cycleUpdateTimerId);
+      this.cycleUpdateTimerId = 0;
+    }
+
+    if (this.cycleCompletionTimerId !== 0) {
+      clearInterval(this.cycleCompletionTimerId);
+      this.cycleCompletionTimerId = 0;
+    }
   }
 }
 

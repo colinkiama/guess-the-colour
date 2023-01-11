@@ -13,7 +13,7 @@ const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
 
 export default class ColorButtonStack extends Component {
-  graphics!: Graphics;
+  colorButtonContainer!: Container<Graphics>;
   selectedColorCallback: SelectedColorCallbackFunction;
 
   constructor(
@@ -25,7 +25,7 @@ export default class ColorButtonStack extends Component {
   }
 
   render() {
-    const colorButtonContainer = new Container<Graphics>();
+    this.colorButtonContainer = new Container<Graphics>();
 
     for (let i = 0; i < 5; i++) {
       let colorButtonGraphics = new Graphics();
@@ -48,15 +48,15 @@ export default class ColorButtonStack extends Component {
         this.handleColorSelection(evnt, buttonColor)
       );
 
-      colorButtonContainer.addChild(colorButtonGraphics);
+      this.colorButtonContainer.addChild(colorButtonGraphics);
     }
 
-    colorButtonContainer.x = this.app.screen.width / 2;
-    colorButtonContainer.y = this.app.screen.height - 80;
-    colorButtonContainer.pivot.x =
-      colorButtonContainer.width / 2 - COLOR_BUTTON_RADIUS;
+    this.colorButtonContainer.x = this.app.screen.width / 2;
+    this.colorButtonContainer.y = this.app.screen.height - 80;
+    this.colorButtonContainer.pivot.x =
+      this.colorButtonContainer.width / 2 - COLOR_BUTTON_RADIUS;
 
-    this.app.stage.addChild(colorButtonContainer);
+    this.app.stage.addChild(this.colorButtonContainer);
   }
 
   handleColorSelection(evnt: FederatedPointerEvent, selectedColor: number) {
@@ -87,7 +87,7 @@ export default class ColorButtonStack extends Component {
   }
 
   destroy(): void {
-    throw new Error("Method not implemented.");
+    this.colorButtonContainer.destroy();
   }
 
   sendColorSelectionNotification(selectedColor: number) {
