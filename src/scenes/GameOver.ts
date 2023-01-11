@@ -30,15 +30,12 @@ export default class GameOver extends Scene {
     titleText.y = 40;
 
     let gameStatsContainer = this.createStatsText();
-    gameStatsContainer.y = this.app.screen.height / 2 - 40;
+    gameStatsContainer.y = this.app.screen.height / 2;
     gameStatsContainer.pivot.y = gameStatsContainer.height / 2;
-
-    let topAreaTextContainer = new Container();
-    topAreaTextContainer.addChild(titleText, gameStatsContainer);
 
     let playAgainButton = this.addPlayAgainButton();
 
-    this.addChild(topAreaTextContainer, playAgainButton);
+    this.addChild(titleText, gameStatsContainer, playAgainButton);
   }
 
   addPlayAgainButton(): Text {
@@ -78,33 +75,55 @@ export default class GameOver extends Scene {
       fontSize: 20,
     });
 
-    let scoreText = new Text(
-      `Score: ${this.results.correctGuesses}`,
-      statsTextStyle
+    let scoreText = this.createScoreText(statsTextStyle, 0);
+
+    let guessesMadeText = this.createGuessesMadeText(
+      statsTextStyle,
+      scoreText.height + statsTextMargin
     );
 
-    centerText(scoreText, this.app);
+    let accuracyText = this.createAccuracyText(
+      statsTextStyle,
+      guessesMadeText.y + guessesMadeText.height + statsTextMargin
+    );
 
+    let gameStatsContainer = new Container<Text>();
+    gameStatsContainer.addChild(scoreText, guessesMadeText, accuracyText);
+
+    return gameStatsContainer;
+  }
+
+  createAccuracyText(statsTextStyle: TextStyle, y: number): Text {
+    let accuracy = calculateAccuracy(this.results);
+    let accuracyText = new Text(`Accuracy: ${accuracy}%`, statsTextStyle);
+    centerText(accuracyText, this.app);
+    accuracyText.y = y;
+
+    return accuracyText;
+  }
+
+  createGuessesMadeText(statsTextStyle: TextStyle, y: number) {
     let guessesMadeText = new Text(
       `Guesses: ${this.results.totalGuesses}`,
       statsTextStyle
     );
 
     centerText(guessesMadeText, this.app);
-    guessesMadeText.y = scoreText.height + statsTextMargin;
+    guessesMadeText.y = y;
 
-    let accuracy = calculateAccuracy(this.results);
+    return guessesMadeText;
+  }
 
-    let accuracyText = new Text(`Accuracy: ${accuracy}%`, statsTextStyle);
+  createScoreText(textStyle: TextStyle, y: number) {
+    let scoreText = new Text(
+      `Score: ${this.results.correctGuesses}`,
+      textStyle
+    );
 
-    centerText(accuracyText, this.app);
-    accuracyText.y =
-      guessesMadeText.y + guessesMadeText.height + statsTextMargin;
+    centerText(scoreText, this.app);
+    scoreText.y = y;
 
-    let gameStatsContainer = new Container<Text>();
-    gameStatsContainer.addChild(scoreText, guessesMadeText, accuracyText);
-
-    return gameStatsContainer;
+    return scoreText;
   }
 }
 
