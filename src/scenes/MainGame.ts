@@ -3,7 +3,7 @@ import StatusFields from "../components/StatusFields";
 import ColorAnswerIndicator from "../components/ColorAnswerIndicator";
 import { Application, Text } from "pixi.js";
 import { fetchRandomNumbers } from "../api/RandomNumber";
-import { COLOR_CHOICES } from "../consts/Colors";
+import { COLOR_CHOICES, ColorStrings } from "../consts/Colors";
 import GuessService from "../services/guessService";
 import { StatusUpdateType } from "../consts/StatusUpdateType";
 import GameTimerService from "../services/GameTimerService";
@@ -11,7 +11,7 @@ import { GuessData, StatusUpdate } from "../types";
 import { Scene } from "./Scene";
 
 // const GAME_TIME = 120000; // In milliseconds
-const GAME_TIME = 10000; // In milliseconds
+const GAME_TIME = 5000; // In milliseconds
 const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
@@ -34,12 +34,11 @@ export default class MainGame extends Scene {
   }
 
   async start() {
-    // TODO: Handle potential errors (it makes a network request)
     this.loadingText = new Text("Loading...", {
       fontFamily: "Arial",
       fontSize: 20,
       align: "center",
-      fill: "#ffffff",
+      fill: ColorStrings.WHITE,
     });
 
     this.loadingText.anchor.set(0.5);
@@ -47,6 +46,7 @@ export default class MainGame extends Scene {
     this.loadingText.y = this.app.screen.height / 2;
     this.addChild(this.loadingText);
 
+    // TODO: Handle potential errors (it makes a network request)
     this.generatedColorChoices = await fetchRandomNumbers();
     this.loadingText.destroy();
 

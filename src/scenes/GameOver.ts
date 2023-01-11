@@ -1,4 +1,5 @@
 import { Application, Container, Text, TextStyle } from "pixi.js";
+import { ColorStrings } from "../consts/Colors";
 import { GuessData } from "../types";
 import { Scene } from "./Scene";
 
@@ -22,7 +23,7 @@ export default class GameOver extends Scene {
       fontSize: 40,
       fontWeight: "700",
       align: "center",
-      fill: "#ffffff",
+      fill: ColorStrings.WHITE,
     });
 
     centerText(titleText, this.app);
@@ -42,7 +43,7 @@ export default class GameOver extends Scene {
 
   addPlayAgainButton(): Text {
     let playAgainText = new Text("Play Again", {
-      fill: "#ffffff",
+      fill: ColorStrings.WHITE,
       align: "center",
       fontSize: 20,
       fontWeight: "700",
@@ -55,12 +56,12 @@ export default class GameOver extends Scene {
 
     playAgainText.on(
       "pointerover",
-      () => (playAgainText.style.fill = "#ff0000")
+      () => (playAgainText.style.fill = ColorStrings.RED)
     );
 
     playAgainText.on(
       "pointerout",
-      () => (playAgainText.style.fill = "#ffffff")
+      () => (playAgainText.style.fill = ColorStrings.WHITE)
     );
 
     playAgainText.once("pointerdown", () => this.playAgainCallback());
@@ -73,7 +74,7 @@ export default class GameOver extends Scene {
     let statsTextStyle = new TextStyle({
       align: "center",
       fontFamily: "Arial",
-      fill: "#ffffff",
+      fill: ColorStrings.WHITE,
       fontSize: 20,
     });
 
@@ -92,12 +93,7 @@ export default class GameOver extends Scene {
     centerText(guessesMadeText, this.app);
     guessesMadeText.y = scoreText.height + statsTextMargin;
 
-    let accuracy =
-      this.results.totalGuesses > 0
-        ? Math.floor(
-            (this.results.correctGuesses / this.results.totalGuesses) * 100
-          )
-        : 0;
+    let accuracy = calculateAccuracy(this.results);
 
     let accuracyText = new Text(`Accuracy: ${accuracy}%`, statsTextStyle);
 
@@ -115,4 +111,12 @@ export default class GameOver extends Scene {
 function centerText(textObject: Text, app: Application) {
   textObject.x = app.screen.width / 2;
   textObject.anchor.x = 0.5;
+}
+
+function calculateAccuracy(results: GuessData) {
+  if (results.totalGuesses < 1) {
+    return 0;
+  }
+
+  return Math.floor((results.correctGuesses / results.totalGuesses) * 100);
 }

@@ -13,3 +13,8 @@ export const COLOR_CHOICES = [
   Colors.YELLOW,
   Colors.ORANGE,
 ];
+
+export const ColorStrings = {
+  WHITE: "#ffffff",
+  RED: "#ff0000",
+};

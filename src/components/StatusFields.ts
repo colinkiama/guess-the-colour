@@ -1,4 +1,5 @@
 import { Application, Text, TextStyle } from "pixi.js";
+import { ColorStrings } from "../consts/Colors";
 import { Component } from "./Component";
 
 const STATUS_FIELD_MARGIN = 20;
@@ -13,7 +14,7 @@ export default class StatusFields extends Component {
 
   addTextFields() {
     const statusFieldsTextStyle = new TextStyle({
-      fill: "#ffffff",
+      fill: ColorStrings.WHITE,
       fontSize: 24,
       align: "center",
     });
