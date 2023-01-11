@@ -1,11 +1,6 @@
-import {
-  Application,
-  Container,
-  FederatedPointerEvent,
-  Graphics,
-} from "pixi.js";
+import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
 
-import { Colors, COLOR_CHOICES } from "../consts/Colors";
+import { COLOR_CHOICES } from "../consts/Colors";
 import { SelectedColorCallbackFunction } from "../types";
 import { Component } from "./Component";
 
@@ -21,7 +16,6 @@ export default class ColorButtonStack extends Component {
   ) {
     super(app);
     this.colorSelectedCallback = selectedColorCallback;
-
     this.addColorButtons();
   }
 
@@ -55,28 +49,7 @@ export default class ColorButtonStack extends Component {
     }
   }
 
-  handleColorSelection(evnt: FederatedPointerEvent, selectedColor: number) {
-    switch (selectedColor) {
-      case Colors.RED:
-        console.log("Player clicked on Red Button");
-        break;
-      case Colors.BLUE:
-        console.log("Player clicked on Blue Button");
-        break;
-      case Colors.GREEN:
-        console.log("Player clicked on Green Button");
-        break;
-      case Colors.YELLOW:
-        console.log("Player clicked on Yellow Button");
-        break;
-      case Colors.ORANGE:
-        console.log("Player clicked on Orange Button");
-        break;
-      default:
-        console.log("Couldn't handle color selection");
-        break;
-    }
-
+  handleColorSelection(_: FederatedPointerEvent, selectedColor: number) {
     this.colorSelectedCallback(selectedColor);
     this.dimColorButtons();
   }
