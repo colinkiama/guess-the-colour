@@ -7,6 +7,8 @@ import { Component } from "./Component";
 const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
 
+const COLOR_BUTTONS_LENGTH = 5;
+
 export default class ColorButtonStack extends Component {
   colorSelectedCallback: ColorSelectedCallbackFunction;
 
@@ -20,12 +22,13 @@ export default class ColorButtonStack extends Component {
   }
 
   addColorButtons() {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < COLOR_BUTTONS_LENGTH; i++) {
       const colorButtonGraphics = new Graphics();
 
       const circleGeometry = {
         x:
-          (i % 5) * (COLOR_BUTTON_RADIUS * 2 + COLOR_BUTTON_SPACING) +
+          (i % COLOR_BUTTONS_LENGTH) *
+            (COLOR_BUTTON_RADIUS * 2 + COLOR_BUTTON_SPACING) +
           COLOR_BUTTON_RADIUS,
         y: 0,
         radius: COLOR_BUTTON_RADIUS,
