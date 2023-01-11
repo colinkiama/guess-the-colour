@@ -141,7 +141,7 @@ export default class MainGame extends Scene {
 
   handleCompletedResultIndicatorCycle() {
     this.revealingAnswer = false;
-    this.colorButtonStack.brightenColorButtons();
+    this.colorButtonStack.appearActive();
     this.updateStatus(StatusUpdateType.SCORE, {
       score: this.guessService.data.correctGuesses,
     });

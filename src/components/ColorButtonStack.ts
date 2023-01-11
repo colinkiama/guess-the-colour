@@ -42,9 +42,11 @@ export default class ColorButtonStack extends Component {
         .endFill();
 
       colorButtonGraphics.interactive = true;
-      colorButtonGraphics.on("pointerdown", (evnt) =>
-        this.handleColorSelection(evnt, buttonColor)
-      );
+      colorButtonGraphics.on("pointerdown", (evnt) => {
+        this.handleColorSelection(evnt, buttonColor);
+      });
+
+      colorButtonGraphics.cursor = "pointer";
 
       this.addChild(colorButtonGraphics);
 
@@ -56,20 +58,24 @@ export default class ColorButtonStack extends Component {
 
   handleColorSelection(_: FederatedPointerEvent, selectedColor: number) {
     this.colorSelectedCallback(selectedColor);
-    this.dimColorButtons();
+    this.appearDisabled();
   }
 
-  dimColorButtons() {
+  appearDisabled() {
     const colorButtonsLength = this.children.length;
     for (let i = 0; i < colorButtonsLength; i++) {
-      this.children[i].alpha = 0.5;
+      let colorButton = this.children[i];
+      colorButton.alpha = 0.5;
+      colorButton.cursor = "auto";
     }
   }
 
-  brightenColorButtons() {
+  appearActive() {
     const colorButtonsLength = this.children.length;
     for (let i = 0; i < colorButtonsLength; i++) {
-      this.children[i].alpha = 1.0;
+      let colorButton = this.children[i];
+      colorButton.alpha = 1.0;
+      colorButton.cursor = "pointer";
     }
   }
 }
