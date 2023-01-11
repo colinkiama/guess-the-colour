@@ -2,7 +2,7 @@ import ColorButtonStack from "../components/ColorButtonStack";
 import StatusFields from "../components/StatusFields";
 import ColorResultIndicator from "../components/ColorResultIndicator";
 import Scene from "./Scene";
-import { Application } from "pixi.js";
+import { Application, Text } from "pixi.js";
 import { fetchRandomNumbers } from "../api/RandomNumber";
 import { COLOR_CHOICES } from "../consts/Colors";
 import GuessService from "../services/guessService";
@@ -23,6 +23,7 @@ export default class MainGame extends Scene {
   private gameTimerService!: GameTimerService;
   private gameOverCallback: (results: GuessData) => void;
   private revealingAnswer: boolean = false;
+  private loadingText!: Text;
 
   constructor(
     app: Application,
@@ -33,6 +34,22 @@ export default class MainGame extends Scene {
   }
 
   async start() {
+    // TODO: Handle potential errors (it makes a network request)
+    this.loadingText = new Text("Loading...", {
+      fontFamily: "Arial",
+      fontSize: 20,
+      align: "center",
+      fill: "#ffffff",
+    });
+
+    this.loadingText.anchor.set(0.5);
+    this.loadingText.x = this.app.screen.width / 2;
+    this.loadingText.y = this.app.screen.height / 2;
+    this.app.stage.addChild(this.loadingText);
+
+    this.generatedColorChoices = await fetchRandomNumbers();
+    this.loadingText.destroy();
+
     this.revealingAnswer = false;
     this.colorButtonStack = new ColorButtonStack(this.app, (color) =>
       this.handleColorSelection(color)
@@ -46,9 +63,6 @@ export default class MainGame extends Scene {
 
     this.statusFields = new StatusFields(this.app);
     this.statusFields.render();
-
-    // TODO: Handle potential errors (it makes a network request)
-    this.generatedColorChoices = await fetchRandomNumbers();
 
     this.guessService = new GuessService();
     this.guessService.setAnswer(
