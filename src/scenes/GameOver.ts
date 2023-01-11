@@ -27,11 +27,13 @@ export default class GameOver extends Scene {
     });
 
     centerText(titleText, this.app);
+    titleText.y = 40;
 
     let gameStatsContainer = this.createStatsText();
+    gameStatsContainer.y = this.app.screen.height / 2 - 40;
+    gameStatsContainer.pivot.y = gameStatsContainer.height / 2;
 
     let topAreaTextContainer = new Container();
-    topAreaTextContainer.y = 40;
     topAreaTextContainer.addChild(titleText, gameStatsContainer);
 
     let playAgainButton = this.addPlayAgainButton();
@@ -92,7 +94,6 @@ export default class GameOver extends Scene {
       guessesMadeText.y + guessesMadeText.height + statsTextMargin;
 
     let gameStatsContainer = new Container<Text>();
-    gameStatsContainer.y = 60;
     gameStatsContainer.addChild(scoreText, guessesMadeText, accuracyText);
 
     return gameStatsContainer;
