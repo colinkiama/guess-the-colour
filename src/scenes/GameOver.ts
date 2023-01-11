@@ -47,6 +47,7 @@ export default class GameOver extends Scene {
     });
 
     playAgainText.interactive = true;
+    playAgainText.cursor = "pointer";
 
     centerText(playAgainText, this.app);
     playAgainText.y = this.app.screen.height - 100;
