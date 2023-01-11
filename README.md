@@ -12,9 +12,9 @@ You get a point for each colour that you guess correctly!
 
 ### Prerequisites
 
-- Node.js (Built with Node v18.12.1)
-- Node Package Manager (NPM) - (Built with NPM 8.19.2)
-- Yarn - (Built with Yarn 3.3.0).
+- [Node.js](https://nodejs.org/) (Built with Node.js 18.12.1)
+- Node Package Manager (NPM) - (Built with NPM 8.19.2. NPM is included with Node.js)
+- [Yarn](https://yarnpkg.com/) - (Built with Yarn 3.3.0).
 
 ### Onboarding
 
