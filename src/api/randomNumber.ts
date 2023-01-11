@@ -18,6 +18,6 @@ const REQUEST_URL = `${API_ENDOPINT}?min=${MIN_VALUE}&max=${MAX_VALUE}&count=${C
 // When not testing random number logic
 export async function fetchRandomNumbers(): Promise<number[]> {
   return new Promise((resolve, _) =>
-    resolve([0, 1, 3, 4, 2, 3, 2, 3, 0, 3, 5, 4, 3, 2, 2, 1, 0, 4, 3])
+    resolve([0, 1, 3, 4, 2, 3, 2, 3, 0, 3, 0, 4, 3, 2, 2, 1, 0, 4, 3])
   );
 }

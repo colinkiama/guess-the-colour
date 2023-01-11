@@ -6,6 +6,7 @@ const STATUS_FIELD_MARGIN = 20;
 export default class StatusFields extends Component {
   timeRemainingTextField!: Text;
   scoreTextField!: Text;
+  textFieldContainer = new Container<Text>();
 
   constructor(app: Application) {
     super(app);
@@ -31,16 +32,17 @@ export default class StatusFields extends Component {
 
     for (let i = 0; i < 2; i++) {
       let statusField = statusFields[i];
+      statusField.x = this.app.screen.width / 2;
       statusField.y = (i % 2) * (statusField.height + STATUS_FIELD_MARGIN);
+      statusField.anchor.x = 0.5;
     }
 
     textFieldContainer.addChild(
       this.timeRemainingTextField,
       this.scoreTextField
     );
-    textFieldContainer.x = this.app.screen.width / 2;
+
     textFieldContainer.y = 40;
-    textFieldContainer.pivot.x = textFieldContainer.width / 2;
     this.app.stage.addChild(textFieldContainer);
   }
 
@@ -49,10 +51,14 @@ export default class StatusFields extends Component {
   }
 
   updateTime(timeLeft: number) {
-    throw new Error("Method not implemented.");
+    this.timeRemainingTextField.text = `${Math.floor(
+      millisecondsToSeconds(timeLeft)
+    )}`;
   }
 
   updateScore(correctGuesses: number) {
     this.scoreTextField.text = correctGuesses.toString(10);
   }
 }
+
+const millisecondsToSeconds = (num: number) => num / 1000;
