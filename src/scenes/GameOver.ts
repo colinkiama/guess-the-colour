@@ -57,6 +57,16 @@ export default class GameOver extends Scene {
     centerText(playAgainText, this.app);
     playAgainText.y = this.app.screen.height - 100;
 
+    playAgainText.on(
+      "pointerover",
+      () => (playAgainText.style.fill = "#ff0000")
+    );
+
+    playAgainText.on(
+      "pointerout",
+      () => (playAgainText.style.fill = "#ffffff")
+    );
+
     playAgainText.once("pointerdown", () => this.playAgainCallback());
     return playAgainText;
   }
