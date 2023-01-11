@@ -10,8 +10,8 @@ import { StatusUpdateType } from "../consts/StatusUpdateType";
 import GameTimerService from "../services/GameTimerService";
 import { GuessData, StatusUpdate } from "../types";
 
-// const GAME_TIME = 120000; // In milliseconds
-const GAME_TIME = 5000; // In milliseconds
+const GAME_TIME = 120000; // In milliseconds
+// const GAME_TIME = 5000; // In milliseconds
 const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
@@ -73,6 +73,7 @@ export default class MainGame extends Scene {
   }
 
   handleCompletedResultIndicatorCycle() {
+    this.colorButtonStack.brightenColorButtons();
     this.updateStatus(StatusUpdateType.SCORE, {
       score: this.guessService.data.correctGuesses,
     });
