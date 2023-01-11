@@ -13,7 +13,7 @@ export default class StatusFields extends Component {
   }
 
   render() {
-    let textFieldContainer = new Container<Text>();
+    this.textFieldContainer = new Container<Text>();
 
     const statusFieldsTextStyle = new TextStyle({
       fill: "#ffffff",
@@ -37,17 +37,17 @@ export default class StatusFields extends Component {
       statusField.anchor.x = 0.5;
     }
 
-    textFieldContainer.addChild(
+    this.textFieldContainer.addChild(
       this.timeRemainingTextField,
       this.scoreTextField
     );
 
-    textFieldContainer.y = 40;
-    this.app.stage.addChild(textFieldContainer);
+    this.textFieldContainer.y = 40;
+    this.app.stage.addChild(this.textFieldContainer);
   }
 
   destroy(): void {
-    throw new Error("Method not implemented.");
+    this.textFieldContainer.destroy();
   }
 
   updateTime(timeLeft: number) {

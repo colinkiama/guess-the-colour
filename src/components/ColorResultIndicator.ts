@@ -53,7 +53,7 @@ export default class ColorResultCircle extends Component {
   }
 
   destroy(): void {
-    throw new Error("Method not implemented.");
+    this.graphics.destroy();
   }
 }
 

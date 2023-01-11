@@ -8,9 +8,10 @@ import { COLOR_CHOICES } from "../consts/Colors";
 import GuessService from "../services/guessService";
 import { StatusUpdateType } from "../consts/StatusUpdateType";
 import GameTimerService from "../services/GameTimerService";
-import { StatusUpdate } from "../types";
+import { GuessData, StatusUpdate } from "../types";
 
-const GAME_TIME = 120000; // In milliseconds
+// const GAME_TIME = 120000; // In milliseconds
+const GAME_TIME = 5000; // In milliseconds
 const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
@@ -20,9 +21,14 @@ export default class MainGame extends Scene {
   private generatedColorChoices!: number[];
   private guessService!: GuessService;
   private gameTimerService!: GameTimerService;
+  private gameOverCallback: (results: GuessData) => void;
 
-  constructor(app: Application) {
+  constructor(
+    app: Application,
+    gameOverCallback: (results: GuessData) => void
+  ) {
     super(app);
+    this.gameOverCallback = gameOverCallback;
   }
 
   async start() {
@@ -59,7 +65,7 @@ export default class MainGame extends Scene {
         this.updateStatus(StatusUpdateType.TIME, { timeLeft: timeLeft }),
       () => {
         this.updateStatus(StatusUpdateType.TIME, { timeLeft: 0 });
-        // TODO: Handle Game Over
+        this.gameOverCallback(this.guessService.data);
       }
     );
 
@@ -118,10 +124,9 @@ export default class MainGame extends Scene {
     );
   }
 
-  destroy() {}
-
-  reset() {
-    this.destroy();
-    this.start();
+  destroy() {
+    this.statusFields.destroy();
+    this.colorButtonStack.destroy();
+    this.colorResultIndicator.destroy();
   }
 }
