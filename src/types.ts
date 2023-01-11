@@ -1,4 +1,4 @@
-export type SelectedColorCallbackFunction = (color: number) => void;
+export type ColorSelectedCallbackFunction = (color: number) => void;
 
 // Incorrect guesses and correct guess rate can be
 // inferred from correct guesses and total guesses.
