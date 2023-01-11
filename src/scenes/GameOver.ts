@@ -26,20 +26,33 @@ export default class GameOver extends Scene {
       fill: "#ffffff",
     });
 
-    titleText.anchor.x = 0.5;
-    titleText.x = this.app.screen.width / 2;
+    centerText(titleText, this.app);
 
     let gameStatsContainer = this.createStatsText();
 
     let topAreaTextContainer = new Container();
     topAreaTextContainer.y = 40;
-
     topAreaTextContainer.addChild(titleText, gameStatsContainer);
 
+    let playAgainButton = this.addPlayAgainButton();
+
     this.gameOverDisplayobjects = new Container();
-    this.gameOverDisplayobjects.addChild(topAreaTextContainer);
+    this.gameOverDisplayobjects.addChild(topAreaTextContainer, playAgainButton);
 
     this.app.stage.addChild(this.gameOverDisplayobjects);
+  }
+
+  addPlayAgainButton(): Text {
+    let playAgainText = new Text("Play Again", {
+      fill: "#ffffff",
+      align: "center",
+      fontSize: 20,
+      fontWeight: "700",
+    });
+
+    centerText(playAgainText, this.app);
+    playAgainText.y = this.app.screen.height - 100;
+    return playAgainText;
   }
 
   createStatsText(): Container<Text> {
