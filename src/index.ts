@@ -16,7 +16,7 @@ mainGame.start();
 function gameOverCallback(results: GuessData) {
   mainGame.destroy();
   let gameOverScene = new GameOver(app, results, () => playAgainCallback());
-  gameOverScene.render();
+  gameOverScene.start();
 }
 
 function playAgainCallback() {
