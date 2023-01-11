@@ -35,6 +35,12 @@ export default class MainGame extends Scene {
   async start() {
     this.revealingAnswer = false;
     this.generatedColorChoices = await this.generateAnswers();
+
+    if (this.generatedColorChoices.length < 1) {
+      // Do not continue the game. Error message is already shown on screen
+      return;
+    }
+
     this.colorButtonStack = this.addColorButtonStack();
     this.colorAnswerIndicator = this.addColorAnswerIndicator();
     this.statusFields = this.addStatusFields();
@@ -91,10 +97,17 @@ export default class MainGame extends Scene {
   }
 
   async generateAnswers(): Promise<number[]> {
+    let generatedAnswers: number[] = [];
     let loadingText = this.addLoadingText();
-    // TODO: Handle potential errors (it makes a network request)
-    let generatedAnswers = await fetchRandomNumbers();
-    loadingText.destroy();
+
+    try {
+      generatedAnswers = await fetchRandomNumbers();
+      loadingText.destroy();
+    } catch (error) {
+      console.error(error);
+      loadingText.text =
+        "Loading Failed!\nPlease restart game or try again later.";
+    }
 
     return generatedAnswers;
   }
