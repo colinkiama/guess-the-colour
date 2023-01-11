@@ -67,7 +67,7 @@ export default class MainGame extends Scene {
   setUpGuessService(): GuessService {
     let guessService = new GuessService();
     guessService.setAnswer(
-      this.generatedColorChoices[this.guessService.data.totalGuesses]
+      this.generatedColorChoices[guessService.data.totalGuesses]
     );
 
     return guessService;
