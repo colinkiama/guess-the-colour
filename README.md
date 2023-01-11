@@ -20,6 +20,10 @@ To get started with running this project locally on your machine:
 2. Run the `yarn install` comamand in the directory to install the required packages for the project
 3. Run a build of the project using the `yarn dev` command.
 
+### Issues
+
+Changes made in `src/api` aren't don't trigger a live reload. You'll need to restart the development server to see the changes applied in `src/api`.
+
 ### Development Commands
 
 | Name           | Description                                                                                          |
