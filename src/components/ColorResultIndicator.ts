@@ -4,7 +4,10 @@ import { Component } from "./Component";
 
 const RESULT_CIRCLE_RADIUS = 80;
 const CYCLE_TIMEOUT = 2000; // In miliseconds;
-// Around frequency of 3 flashes per second. See WCAG Success criteria 2.3.1: Three Flashes or Below Threshold (Level A)
+
+// Around frequency of 3 flashes per second.
+// See WCAG Success criteria 2.3.1: Three Flashes or Below Threshold (Level A)
+// See: https://www.w3.org/WAI/WCAG21/Understanding/three-flashes-or-below-threshold.html
 const COLOR_UPDATE_INTERVAL = 333; // In milliseconds
 
 export default class ColorResultCircle extends Component {
