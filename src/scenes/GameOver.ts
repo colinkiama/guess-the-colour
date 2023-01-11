@@ -52,8 +52,12 @@ export default class GameOver extends Scene {
       fontWeight: "700",
     });
 
+    playAgainText.interactive = true;
+
     centerText(playAgainText, this.app);
     playAgainText.y = this.app.screen.height - 100;
+
+    playAgainText.once("pointerdown", () => this.playAgainCallback());
     return playAgainText;
   }
 
@@ -97,6 +101,10 @@ export default class GameOver extends Scene {
     gameStatsContainer.addChild(scoreText, guessesMadeText, accuracyText);
 
     return gameStatsContainer;
+  }
+
+  destroy() {
+    this.gameOverDisplayobjects.destroy();
   }
 }
 
