@@ -1,3 +1,5 @@
+import { GameTimerServiceParams } from "../types";
+
 export default class GameTimerService {
   private tickIntervalTimerId!: number;
   private gameSessionTimerID!: number;
@@ -7,17 +9,12 @@ export default class GameTimerService {
   private tickCallback: (timeLeft: number) => void;
   private timerCompletedCallback: () => void;
 
-  constructor(
-    sessionLength: number,
-    tickInterval: number,
-    tickCallback: (timeLeft: number) => void,
-    timerCompletedCallback: () => void
-  ) {
-    this.sessionLength = sessionLength;
-    this.timeLeft = sessionLength;
-    this.tickInterval = tickInterval;
-    this.tickCallback = tickCallback;
-    this.timerCompletedCallback = timerCompletedCallback;
+  constructor(params: GameTimerServiceParams) {
+    this.sessionLength = params.sessionLength;
+    this.timeLeft = params.sessionLength;
+    this.tickInterval = params.tickInterval;
+    this.tickCallback = params.tickCallback;
+    this.timerCompletedCallback = params.timerCompletedCallback;
   }
 
   start() {

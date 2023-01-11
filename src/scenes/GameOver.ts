@@ -1,11 +1,11 @@
 import { Application, Container, Text, TextStyle } from "pixi.js";
+import { ColorStrings } from "../consts/Colors";
 import { GuessData } from "../types";
-import Scene from "./Scene";
+import { Scene } from "./Scene";
 
 export default class GameOver extends Scene {
   private results: GuessData;
   private playAgainCallback: () => void;
-  private gameOverDisplayobjects!: Container;
 
   constructor(
     app: Application,
@@ -23,39 +23,44 @@ export default class GameOver extends Scene {
       fontSize: 40,
       fontWeight: "700",
       align: "center",
-      fill: "#ffffff",
+      fill: ColorStrings.WHITE,
     });
 
     centerText(titleText, this.app);
     titleText.y = 40;
 
     let gameStatsContainer = this.createStatsText();
-    gameStatsContainer.y = this.app.screen.height / 2 - 40;
+    gameStatsContainer.y = this.app.screen.height / 2;
     gameStatsContainer.pivot.y = gameStatsContainer.height / 2;
-
-    let topAreaTextContainer = new Container();
-    topAreaTextContainer.addChild(titleText, gameStatsContainer);
 
     let playAgainButton = this.addPlayAgainButton();
 
-    this.gameOverDisplayobjects = new Container();
-    this.gameOverDisplayobjects.addChild(topAreaTextContainer, playAgainButton);
-
-    this.app.stage.addChild(this.gameOverDisplayobjects);
+    this.addChild(titleText, gameStatsContainer, playAgainButton);
   }
 
   addPlayAgainButton(): Text {
     let playAgainText = new Text("Play Again", {
-      fill: "#ffffff",
+      fill: ColorStrings.WHITE,
       align: "center",
       fontSize: 20,
       fontWeight: "700",
     });
 
     playAgainText.interactive = true;
+    playAgainText.cursor = "pointer";
 
     centerText(playAgainText, this.app);
     playAgainText.y = this.app.screen.height - 100;
+
+    playAgainText.on(
+      "pointerover",
+      () => (playAgainText.style.fill = ColorStrings.RED)
+    );
+
+    playAgainText.on(
+      "pointerout",
+      () => (playAgainText.style.fill = ColorStrings.WHITE)
+    );
 
     playAgainText.once("pointerdown", () => this.playAgainCallback());
     return playAgainText;
@@ -67,36 +72,21 @@ export default class GameOver extends Scene {
     let statsTextStyle = new TextStyle({
       align: "center",
       fontFamily: "Arial",
-      fill: "#ffffff",
+      fill: ColorStrings.WHITE,
       fontSize: 20,
     });
 
-    let scoreText = new Text(
-      `Score: ${this.results.correctGuesses}`,
-      statsTextStyle
+    let scoreText = this.createScoreText(statsTextStyle, 0);
+
+    let guessesMadeText = this.createGuessesMadeText(
+      statsTextStyle,
+      scoreText.height + statsTextMargin
     );
 
-    centerText(scoreText, this.app);
-
-    let guessesMadeText = new Text(
-      `Guesses: ${this.results.totalGuesses}`,
-      statsTextStyle
+    let accuracyText = this.createAccuracyText(
+      statsTextStyle,
+      guessesMadeText.y + guessesMadeText.height + statsTextMargin
     );
-
-    centerText(guessesMadeText, this.app);
-    guessesMadeText.y = scoreText.height + statsTextMargin;
-
-    let accuracy =
-      this.results.totalGuesses > 0
-        ? Math.floor(this.results.correctGuesses / this.results.totalGuesses) *
-          100
-        : 0;
-
-    let accuracyText = new Text(`Accuracy: ${accuracy}%`, statsTextStyle);
-
-    centerText(accuracyText, this.app);
-    accuracyText.y =
-      guessesMadeText.y + guessesMadeText.height + statsTextMargin;
 
     let gameStatsContainer = new Container<Text>();
     gameStatsContainer.addChild(scoreText, guessesMadeText, accuracyText);
@@ -104,12 +94,49 @@ export default class GameOver extends Scene {
     return gameStatsContainer;
   }
 
-  destroy() {
-    this.gameOverDisplayobjects.destroy();
+  createAccuracyText(statsTextStyle: TextStyle, y: number): Text {
+    let accuracy = calculateAccuracy(this.results);
+    let accuracyText = new Text(`Accuracy: ${accuracy}%`, statsTextStyle);
+    centerText(accuracyText, this.app);
+    accuracyText.y = y;
+
+    return accuracyText;
+  }
+
+  createGuessesMadeText(statsTextStyle: TextStyle, y: number) {
+    let guessesMadeText = new Text(
+      `Guesses: ${this.results.totalGuesses}`,
+      statsTextStyle
+    );
+
+    centerText(guessesMadeText, this.app);
+    guessesMadeText.y = y;
+
+    return guessesMadeText;
+  }
+
+  createScoreText(textStyle: TextStyle, y: number) {
+    let scoreText = new Text(
+      `Score: ${this.results.correctGuesses}`,
+      textStyle
+    );
+
+    centerText(scoreText, this.app);
+    scoreText.y = y;
+
+    return scoreText;
   }
 }
 
 function centerText(textObject: Text, app: Application) {
   textObject.x = app.screen.width / 2;
   textObject.anchor.x = 0.5;
+}
+
+function calculateAccuracy(results: GuessData) {
+  if (results.totalGuesses < 1) {
+    return 0;
+  }
+
+  return Math.floor((results.correctGuesses / results.totalGuesses) * 100);
 }

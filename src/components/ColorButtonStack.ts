@@ -1,37 +1,35 @@
-import {
-  Application,
-  Container,
-  FederatedPointerEvent,
-  Graphics,
-} from "pixi.js";
+import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
 
-import { Colors, COLOR_CHOICES } from "../consts/Colors";
-import { SelectedColorCallbackFunction } from "../types";
+import { COLOR_CHOICES } from "../consts/Colors";
+import { ColorSelectedCallbackFunction } from "../types";
 import { Component } from "./Component";
 
 const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
 
+const COLOR_BUTTONS_LENGTH = 5;
+
 export default class ColorButtonStack extends Component {
-  colorButtonContainer!: Container<Graphics>;
-  selectedColorCallback: SelectedColorCallbackFunction;
+  colorSelectedCallback: ColorSelectedCallbackFunction;
 
   constructor(
     app: Application,
-    selectedColorCallback: SelectedColorCallbackFunction
+    colorSelectedCallback: ColorSelectedCallbackFunction
   ) {
     super(app);
-    this.selectedColorCallback = selectedColorCallback;
+    this.colorSelectedCallback = colorSelectedCallback;
+    this.addColorButtons();
   }
 
-  render() {
-    this.colorButtonContainer = new Container<Graphics>();
-
-    for (let i = 0; i < 5; i++) {
-      let colorButtonGraphics = new Graphics();
+  addColorButtons() {
+    for (let i = 0; i < COLOR_BUTTONS_LENGTH; i++) {
+      const colorButtonGraphics = new Graphics();
 
       const circleGeometry = {
-        x: (i % 5) * (COLOR_BUTTON_RADIUS * 2 + COLOR_BUTTON_SPACING),
+        x:
+          (i % COLOR_BUTTONS_LENGTH) *
+            (COLOR_BUTTON_RADIUS * 2 + COLOR_BUTTON_SPACING) +
+          COLOR_BUTTON_RADIUS,
         y: 0,
         radius: COLOR_BUTTON_RADIUS,
       };
@@ -44,66 +42,40 @@ export default class ColorButtonStack extends Component {
         .endFill();
 
       colorButtonGraphics.interactive = true;
-      colorButtonGraphics.on("pointerdown", (evnt) =>
-        this.handleColorSelection(evnt, buttonColor)
-      );
+      colorButtonGraphics.on("pointerdown", (evnt) => {
+        this.handleColorSelection(evnt, buttonColor);
+      });
 
-      this.colorButtonContainer.addChild(colorButtonGraphics);
+      colorButtonGraphics.cursor = "pointer";
+
+      this.addChild(colorButtonGraphics);
+
+      this.x = this.app.screen.width / 2;
+      this.y = this.app.screen.height - 80;
+      this.pivot.x = this.width / 2;
     }
-
-    this.colorButtonContainer.x = this.app.screen.width / 2;
-    this.colorButtonContainer.y = this.app.screen.height - 80;
-    this.colorButtonContainer.pivot.x =
-      this.colorButtonContainer.width / 2 - COLOR_BUTTON_RADIUS;
-
-    this.app.stage.addChild(this.colorButtonContainer);
   }
 
-  handleColorSelection(evnt: FederatedPointerEvent, selectedColor: number) {
-    switch (selectedColor) {
-      case Colors.RED:
-        console.log("Player clicked on Red Button");
-        break;
-      case Colors.BLUE:
-        console.log("Player clicked on Blue Button");
-        break;
-      case Colors.GREEN:
-        console.log("Player clicked on Green Button");
-        break;
-      case Colors.YELLOW:
-        console.log("Player clicked on Yellow Button");
-        break;
-      case Colors.ORANGE:
-        console.log("Player clicked on Orange Button");
-        break;
-      default:
-        console.log("Couldn't handle color selection");
-        break;
-    }
-
-    this.dimColorButtons();
-    this.sendColorSelectionNotification(selectedColor);
+  handleColorSelection(_: FederatedPointerEvent, selectedColor: number) {
+    this.colorSelectedCallback(selectedColor);
+    this.appearDisabled();
   }
 
-  dimColorButtons() {
-    const colorButtonsLength = this.colorButtonContainer.children.length;
+  appearDisabled() {
+    const colorButtonsLength = this.children.length;
     for (let i = 0; i < colorButtonsLength; i++) {
-      this.colorButtonContainer.children[i].alpha = 0.5;
+      let colorButton = this.children[i];
+      colorButton.alpha = 0.5;
+      colorButton.cursor = "auto";
     }
   }
 
-  brightenColorButtons() {
-    const colorButtonsLength = this.colorButtonContainer.children.length;
+  appearActive() {
+    const colorButtonsLength = this.children.length;
     for (let i = 0; i < colorButtonsLength; i++) {
-      this.colorButtonContainer.children[i].alpha = 1.0;
+      let colorButton = this.children[i];
+      colorButton.alpha = 1.0;
+      colorButton.cursor = "pointer";
     }
-  }
-
-  destroy(): void {
-    this.colorButtonContainer.destroy();
-  }
-
-  sendColorSelectionNotification(selectedColor: number) {
-    this.selectedColorCallback(selectedColor);
   }
 }

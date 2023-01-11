@@ -1,28 +1,27 @@
 import ColorButtonStack from "../components/ColorButtonStack";
 import StatusFields from "../components/StatusFields";
-import ColorResultIndicator from "../components/ColorResultIndicator";
-import Scene from "./Scene";
-import { Application } from "pixi.js";
+import ColorAnswerIndicator from "../components/ColorAnswerIndicator";
+import { Application, Text } from "pixi.js";
 import { fetchRandomNumbers } from "../api/RandomNumber";
-import { COLOR_CHOICES } from "../consts/Colors";
+import { COLOR_CHOICES, ColorStrings } from "../consts/Colors";
 import GuessService from "../services/guessService";
 import { StatusUpdateType } from "../consts/StatusUpdateType";
 import GameTimerService from "../services/GameTimerService";
 import { GuessData, StatusUpdate } from "../types";
+import { Scene } from "./Scene";
 
 const GAME_TIME = 120000; // In milliseconds
-// const GAME_TIME = 5000; // In milliseconds
 const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
-  private colorButtonStack!: ColorButtonStack;
-  private colorResultIndicator!: ColorResultIndicator;
+  private colorAnswerIndicator!: ColorAnswerIndicator;
   private statusFields!: StatusFields;
   private generatedColorChoices!: number[];
   private guessService!: GuessService;
   private gameTimerService!: GameTimerService;
   private gameOverCallback: (results: GuessData) => void;
   private revealingAnswer: boolean = false;
+  private colorButtonStack!: ColorButtonStack;
 
   constructor(
     app: Application,
@@ -34,49 +33,109 @@ export default class MainGame extends Scene {
 
   async start() {
     this.revealingAnswer = false;
-    this.colorButtonStack = new ColorButtonStack(this.app, (color) =>
-      this.handleColorSelection(color)
-    );
-    this.colorButtonStack.render();
+    this.generatedColorChoices = await this.generateAnswers();
 
-    this.colorResultIndicator = new ColorResultIndicator(this.app, () =>
-      this.handleCompletedResultIndicatorCycle()
-    );
-    this.colorResultIndicator.render();
+    if (this.generatedColorChoices.length < 1) {
+      // Do not continue the game. Error message is already shown on screen
+      return;
+    }
 
-    this.statusFields = new StatusFields(this.app);
-    this.statusFields.render();
+    this.colorButtonStack = this.addColorButtonStack();
+    this.colorAnswerIndicator = this.addColorAnswerIndicator();
+    this.statusFields = this.addStatusFields();
+    this.guessService = this.setUpGuessService();
 
-    // TODO: Handle potential errors (it makes a network request)
-    this.generatedColorChoices = await fetchRandomNumbers();
+    this.gameTimerService = this.setUpGameTimerService();
+    this.updateStatus(StatusUpdateType.TIME, { timeLeft: GAME_TIME });
+    this.gameTimerService.start();
+  }
 
-    this.guessService = new GuessService();
-    this.guessService.setAnswer(
-      this.generatedColorChoices[this.guessService.data.totalGuesses]
-    );
-
-    console.log(
-      "Color Choices for this game session:",
-      this.generatedColorChoices
-    );
-
-    this.gameTimerService = new GameTimerService(
-      GAME_TIME,
-      GAME_TIME_UPDATE_INTERVAL,
-      (timeLeft: number) =>
+  setUpGameTimerService(): GameTimerService {
+    let gameTimerService = new GameTimerService({
+      sessionLength: GAME_TIME,
+      tickInterval: GAME_TIME_UPDATE_INTERVAL,
+      tickCallback: (timeLeft: number) =>
         this.updateStatus(StatusUpdateType.TIME, { timeLeft: timeLeft }),
-      () => {
+      timerCompletedCallback: () => {
         this.updateStatus(StatusUpdateType.TIME, { timeLeft: 0 });
         this.gameOverCallback(this.guessService.data);
-      }
+      },
+    });
+
+    return gameTimerService;
+  }
+
+  setUpGuessService(): GuessService {
+    let guessService = new GuessService();
+    guessService.setAnswer(
+      this.generatedColorChoices[guessService.data.totalGuesses]
     );
 
-    this.gameTimerService.start();
+    return guessService;
+  }
+
+  addStatusFields(): StatusFields {
+    let statusFields = new StatusFields(this.app);
+    this.addChild(statusFields);
+    return statusFields;
+  }
+
+  addColorAnswerIndicator(): ColorAnswerIndicator {
+    let colorAnswerIndicator = new ColorAnswerIndicator(this.app, () =>
+      this.handleCompletedResultIndicatorCycle()
+    );
+
+    this.addChild(colorAnswerIndicator);
+
+    return colorAnswerIndicator;
+  }
+
+  async generateAnswers(): Promise<number[]> {
+    let generatedAnswers: number[] = [];
+    let loadingText = this.addLoadingText();
+
+    try {
+      generatedAnswers = await fetchRandomNumbers();
+      loadingText.destroy();
+    } catch (error) {
+      console.error(error);
+      loadingText.text =
+        "Loading Failed!\nPlease restart game or try again later.";
+    }
+
+    return generatedAnswers;
+  }
+
+  addLoadingText(): Text {
+    let loadingText = new Text("Loading...", {
+      fontFamily: "Arial",
+      fontSize: 20,
+      align: "center",
+      fill: ColorStrings.WHITE,
+    });
+
+    loadingText.anchor.set(0.5);
+    loadingText.x = this.app.screen.width / 2;
+    loadingText.y = this.app.screen.height / 2;
+
+    this.addChild(loadingText);
+
+    return loadingText;
+  }
+
+  addColorButtonStack(): ColorButtonStack {
+    let colorButtonStack = new ColorButtonStack(this.app, (color) =>
+      this.handleColorSelection(color)
+    );
+
+    this.addChild(colorButtonStack);
+
+    return colorButtonStack;
   }
 
   handleCompletedResultIndicatorCycle() {
     this.revealingAnswer = false;
-    this.colorButtonStack.brightenColorButtons();
+    this.colorButtonStack.appearActive();
     this.updateStatus(StatusUpdateType.SCORE, {
       score: this.guessService.data.correctGuesses,
     });
@@ -104,9 +163,10 @@ export default class MainGame extends Scene {
       this.generatedColorChoices[this.guessService.data.totalGuesses];
 
     this.revealingAnswer = true;
-    this.colorResultIndicator.cycleColorsToResult(
+    this.colorAnswerIndicator.cycleColorsToAnswer(
       COLOR_CHOICES[correctAnswerIndex]
     );
+
     this.guessService.guess(playerGuess);
     this.guessService.setAnswer(
       this.generatedColorChoices[this.guessService.data.totalGuesses]
@@ -117,11 +177,6 @@ export default class MainGame extends Scene {
     for (let i = 0; i < COLOR_CHOICES.length; i++) {
       const choiceValue = COLOR_CHOICES[i];
       if (color === choiceValue) {
-        console.log("Player colour selection data:", {
-          color: color.toString(16),
-          choiceIndex: i,
-        });
-
         return i;
       }
     }
@@ -131,11 +186,5 @@ export default class MainGame extends Scene {
     throw new Error(
       `Colour selection is not in expected range of choices.\n Selected color: ${color}`
     );
-  }
-
-  destroy() {
-    this.statusFields.destroy();
-    this.colorButtonStack.destroy();
-    this.colorResultIndicator.destroy();
   }
 }
