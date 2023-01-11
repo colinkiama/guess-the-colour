@@ -41,6 +41,7 @@ export default class MainGame extends Scene {
     this.guessService = this.setUpGuessService();
 
     this.gameTimerService = this.setUpGameTimerService();
+    this.updateStatus(StatusUpdateType.TIME, { timeLeft: GAME_TIME });
     this.gameTimerService.start();
 
     console.log(
