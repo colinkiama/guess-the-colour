@@ -1,11 +1,10 @@
 import { Application, Container, Text, TextStyle } from "pixi.js";
 import { GuessData } from "../types";
-import Scene from "./Scene";
+import { Scene } from "./Scene";
 
 export default class GameOver extends Scene {
   private results: GuessData;
   private playAgainCallback: () => void;
-  private gameOverDisplayobjects!: Container;
 
   constructor(
     app: Application,
@@ -38,10 +37,7 @@ export default class GameOver extends Scene {
 
     let playAgainButton = this.addPlayAgainButton();
 
-    this.gameOverDisplayobjects = new Container();
-    this.gameOverDisplayobjects.addChild(topAreaTextContainer, playAgainButton);
-
-    this.app.stage.addChild(this.gameOverDisplayobjects);
+    this.addChild(topAreaTextContainer, playAgainButton);
   }
 
   addPlayAgainButton(): Text {
@@ -98,8 +94,9 @@ export default class GameOver extends Scene {
 
     let accuracy =
       this.results.totalGuesses > 0
-        ? Math.floor(this.results.correctGuesses / this.results.totalGuesses) *
-          100
+        ? Math.floor(
+            (this.results.correctGuesses / this.results.totalGuesses) * 100
+          )
         : 0;
 
     let accuracyText = new Text(`Accuracy: ${accuracy}%`, statsTextStyle);
@@ -112,10 +109,6 @@ export default class GameOver extends Scene {
     gameStatsContainer.addChild(scoreText, guessesMadeText, accuracyText);
 
     return gameStatsContainer;
-  }
-
-  destroy() {
-    this.gameOverDisplayobjects.destroy();
   }
 }
 

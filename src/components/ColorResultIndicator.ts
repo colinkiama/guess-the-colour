@@ -1,5 +1,5 @@
 import { Application, Graphics } from "pixi.js";
-import { Colors, COLOR_CHOICES } from "../consts/Colors";
+import { COLOR_CHOICES } from "../consts/Colors";
 import { Component } from "./Component";
 
 const RESULT_CIRCLE_RADIUS = 80;
@@ -8,7 +8,6 @@ const CYCLE_TIMEOUT = 2000; // In miliseconds;
 const COLOR_UPDATE_INTERVAL = 333; // In milliseconds
 
 export default class ColorResultCircle extends Component {
-  graphics!: Graphics;
   cycleUpdateTimerId!: number;
   cycleCompletionTimerId!: number;
   completedCycleCallback: () => void;
@@ -19,22 +18,23 @@ export default class ColorResultCircle extends Component {
     super(app);
     this.completedCycleCallback = completedCycleCallback;
     this.cycleIndex = 0;
-    this.graphics = new Graphics();
+    let indicatorCircle = new Graphics();
 
     // Timer creation methods return non-zero values
     this.cycleUpdateTimerId = 0;
     this.cycleCompletionTimerId = 0;
-  }
 
-  render(): void {
+    indicatorCircle.x = this.app.screen.width / 2;
+    indicatorCircle.pivot.x = indicatorCircle.width / 2;
+
+    this.addChild(indicatorCircle);
     this.draw();
-    this.graphics.x = this.app.screen.width / 2;
-    this.graphics.pivot.x = this.graphics.width / 2 - RESULT_CIRCLE_RADIUS;
-    this.app.stage.addChild(this.graphics);
   }
 
   draw(): void {
-    this.graphics
+    let indicatorcircle = this.getChildAt(0) as Graphics;
+
+    indicatorcircle
       .clear()
       .beginFill(COLOR_CHOICES[this.cycleIndex])
       .drawCircle(0, 300, RESULT_CIRCLE_RADIUS)
@@ -45,10 +45,12 @@ export default class ColorResultCircle extends Component {
     this.cycleCompletionTimerId = setTimeout(() => {
       clearInterval(this.cycleUpdateTimerId);
       clearTimeout(this.cycleCompletionTimerId);
+
       this.cycleUpdateTimerId = 0;
       this.cycleCompletionTimerId = 0;
 
       this.cycleIndex = COLOR_CHOICES.indexOf(color);
+
       this.draw();
       this.completedCycleCallback();
     }, CYCLE_TIMEOUT);
@@ -60,7 +62,6 @@ export default class ColorResultCircle extends Component {
   }
 
   destroy(): void {
-    this.graphics.destroy();
     if (this.cycleUpdateTimerId !== 0) {
       clearInterval(this.cycleUpdateTimerId);
       this.cycleUpdateTimerId = 0;
@@ -70,6 +71,8 @@ export default class ColorResultCircle extends Component {
       clearInterval(this.cycleCompletionTimerId);
       this.cycleCompletionTimerId = 0;
     }
+
+    super.destroy();
   }
 }
 

@@ -13,22 +13,21 @@ const COLOR_BUTTON_RADIUS = 25;
 const COLOR_BUTTON_SPACING = 10;
 
 export default class ColorButtonStack extends Component {
-  colorButtonContainer!: Container<Graphics>;
-  selectedColorCallback: SelectedColorCallbackFunction;
+  colorSelectedCallback: SelectedColorCallbackFunction;
 
   constructor(
     app: Application,
     selectedColorCallback: SelectedColorCallbackFunction
   ) {
     super(app);
-    this.selectedColorCallback = selectedColorCallback;
+    this.colorSelectedCallback = selectedColorCallback;
+
+    this.addColorButtons();
   }
 
-  render() {
-    this.colorButtonContainer = new Container<Graphics>();
-
+  addColorButtons() {
     for (let i = 0; i < 5; i++) {
-      let colorButtonGraphics = new Graphics();
+      const colorButtonGraphics = new Graphics();
 
       const circleGeometry = {
         x: (i % 5) * (COLOR_BUTTON_RADIUS * 2 + COLOR_BUTTON_SPACING),
@@ -48,15 +47,12 @@ export default class ColorButtonStack extends Component {
         this.handleColorSelection(evnt, buttonColor)
       );
 
-      this.colorButtonContainer.addChild(colorButtonGraphics);
+      this.addChild(colorButtonGraphics);
+
+      this.x = this.app.screen.width / 2;
+      this.y = this.app.screen.height - 80;
+      this.pivot.x = this.width / 2 - COLOR_BUTTON_RADIUS;
     }
-
-    this.colorButtonContainer.x = this.app.screen.width / 2;
-    this.colorButtonContainer.y = this.app.screen.height - 80;
-    this.colorButtonContainer.pivot.x =
-      this.colorButtonContainer.width / 2 - COLOR_BUTTON_RADIUS;
-
-    this.app.stage.addChild(this.colorButtonContainer);
   }
 
   handleColorSelection(evnt: FederatedPointerEvent, selectedColor: number) {
@@ -81,29 +77,21 @@ export default class ColorButtonStack extends Component {
         break;
     }
 
+    this.colorSelectedCallback(selectedColor);
     this.dimColorButtons();
-    this.sendColorSelectionNotification(selectedColor);
   }
 
   dimColorButtons() {
-    const colorButtonsLength = this.colorButtonContainer.children.length;
+    const colorButtonsLength = this.children.length;
     for (let i = 0; i < colorButtonsLength; i++) {
-      this.colorButtonContainer.children[i].alpha = 0.5;
+      this.children[i].alpha = 0.5;
     }
   }
 
   brightenColorButtons() {
-    const colorButtonsLength = this.colorButtonContainer.children.length;
+    const colorButtonsLength = this.children.length;
     for (let i = 0; i < colorButtonsLength; i++) {
-      this.colorButtonContainer.children[i].alpha = 1.0;
+      this.children[i].alpha = 1.0;
     }
-  }
-
-  destroy(): void {
-    this.colorButtonContainer.destroy();
-  }
-
-  sendColorSelectionNotification(selectedColor: number) {
-    this.selectedColorCallback(selectedColor);
   }
 }

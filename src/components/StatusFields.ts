@@ -6,15 +6,13 @@ const STATUS_FIELD_MARGIN = 20;
 export default class StatusFields extends Component {
   timeRemainingTextField!: Text;
   scoreTextField!: Text;
-  textFieldContainer = new Container<Text>();
 
   constructor(app: Application) {
     super(app);
+    this.addTextFields();
   }
 
-  render() {
-    this.textFieldContainer = new Container<Text>();
-
+  addTextFields() {
     const statusFieldsTextStyle = new TextStyle({
       fill: "#ffffff",
       fontSize: 24,
@@ -37,17 +35,9 @@ export default class StatusFields extends Component {
       statusField.anchor.x = 0.5;
     }
 
-    this.textFieldContainer.addChild(
-      this.timeRemainingTextField,
-      this.scoreTextField
-    );
+    this.addChild(this.timeRemainingTextField, this.scoreTextField);
 
-    this.textFieldContainer.y = 40;
-    this.app.stage.addChild(this.textFieldContainer);
-  }
-
-  destroy(): void {
-    this.textFieldContainer.destroy();
+    this.y = 40;
   }
 
   updateTime(timeLeft: number) {

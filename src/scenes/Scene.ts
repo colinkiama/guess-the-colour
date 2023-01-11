@@ -1,9 +1,5 @@
-import { Application } from "pixi.js";
+import { Component } from "../components/Component";
 
-export default abstract class Scene {
-  protected app: Application;
-
-  constructor(app: Application) {
-    this.app = app;
-  }
+export abstract class Scene extends Component {
+  abstract start(): void;
 }

@@ -1,7 +1,6 @@
 import ColorButtonStack from "../components/ColorButtonStack";
 import StatusFields from "../components/StatusFields";
 import ColorResultIndicator from "../components/ColorResultIndicator";
-import Scene from "./Scene";
 import { Application, Text } from "pixi.js";
 import { fetchRandomNumbers } from "../api/RandomNumber";
 import { COLOR_CHOICES } from "../consts/Colors";
@@ -9,9 +8,10 @@ import GuessService from "../services/guessService";
 import { StatusUpdateType } from "../consts/StatusUpdateType";
 import GameTimerService from "../services/GameTimerService";
 import { GuessData, StatusUpdate } from "../types";
+import { Scene } from "./Scene";
 
 // const GAME_TIME = 120000; // In milliseconds
-const GAME_TIME = 5000; // In milliseconds
+const GAME_TIME = 10000; // In milliseconds
 const GAME_TIME_UPDATE_INTERVAL = 500; // In milliseconds
 
 export default class MainGame extends Scene {
@@ -45,7 +45,7 @@ export default class MainGame extends Scene {
     this.loadingText.anchor.set(0.5);
     this.loadingText.x = this.app.screen.width / 2;
     this.loadingText.y = this.app.screen.height / 2;
-    this.app.stage.addChild(this.loadingText);
+    this.addChild(this.loadingText);
 
     this.generatedColorChoices = await fetchRandomNumbers();
     this.loadingText.destroy();
@@ -54,15 +54,17 @@ export default class MainGame extends Scene {
     this.colorButtonStack = new ColorButtonStack(this.app, (color) =>
       this.handleColorSelection(color)
     );
-    this.colorButtonStack.render();
+
+    this.addChild(this.colorButtonStack);
 
     this.colorResultIndicator = new ColorResultIndicator(this.app, () =>
       this.handleCompletedResultIndicatorCycle()
     );
-    this.colorResultIndicator.render();
+
+    this.addChild(this.colorResultIndicator);
 
     this.statusFields = new StatusFields(this.app);
-    this.statusFields.render();
+    this.addChild(this.statusFields);
 
     this.guessService = new GuessService();
     this.guessService.setAnswer(
@@ -145,11 +147,5 @@ export default class MainGame extends Scene {
     throw new Error(
       `Colour selection is not in expected range of choices.\n Selected color: ${color}`
     );
-  }
-
-  destroy() {
-    this.statusFields.destroy();
-    this.colorButtonStack.destroy();
-    this.colorResultIndicator.destroy();
   }
 }
