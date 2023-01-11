@@ -60,8 +60,6 @@ export default class ColorButtonStack extends Component {
   }
 
   handleColorSelection(evnt: FederatedPointerEvent, selectedColor: number) {
-    // console.log(target.geometry.colors);
-
     switch (selectedColor) {
       case Colors.RED:
         console.log("Player clicked on Red Button");
@@ -83,7 +81,22 @@ export default class ColorButtonStack extends Component {
         break;
     }
 
+    this.dimColorButtons();
     this.sendColorSelectionNotification(selectedColor);
+  }
+
+  dimColorButtons() {
+    const colorButtonsLength = this.colorButtonContainer.children.length;
+    for (let i = 0; i < colorButtonsLength; i++) {
+      this.colorButtonContainer.children[i].alpha = 0.5;
+    }
+  }
+
+  brightenColorButtons() {
+    const colorButtonsLength = this.colorButtonContainer.children.length;
+    for (let i = 0; i < colorButtonsLength; i++) {
+      this.colorButtonContainer.children[i].alpha = 1.0;
+    }
   }
 
   destroy(): void {
